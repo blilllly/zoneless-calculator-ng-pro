@@ -5,5 +5,9 @@ button {
 }
 
 .is-command {
-  @apply bg-indigo-500 backdrop-opacity-20;
+  @apply bg-indigo-500;
+}
+
+.is-pressed {
+  @apply bg-indigo-800;
 }
