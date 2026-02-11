@@ -7,6 +7,7 @@ describe('CalculatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(CalculatorService);
+    vi.restoreAllMocks();
   });
 
   it('should be created', () => {
@@ -34,6 +35,7 @@ describe('CalculatorService', () => {
   it('should update resultText with number input', () => {
     service.constructNumber('3');
     service.constructNumber('4');
+
     expect(service.resultText()).toBe('34');
   });
 
@@ -43,56 +45,125 @@ describe('CalculatorService', () => {
     operators.forEach((operator) => {
       service.resultText.set('123');
       service.constructNumber(operator);
+
       expect(service.resultText()).toBe('0');
       expect(service.lastOperator()).toBe(operator);
     });
   });
 
   it('should calculate result correctly for addition', () => {
-    // todo:
+    service.constructNumber('1');
+    service.constructNumber('+');
+    service.constructNumber('2');
+    service.constructNumber('=');
+
+    expect(service.resultText()).toBe('3');
   });
 
   it('should calculate result correctly for subtraction', () => {
-    // todo:
+    service.constructNumber('2');
+    service.constructNumber('-');
+    service.constructNumber('1');
+    service.constructNumber('=');
+
+    expect(service.resultText()).toBe('1');
   });
 
   it('should calculate result correctly for multiplication', () => {
-    // todo:
+    service.constructNumber('2');
+    service.constructNumber('⨉');
+    service.constructNumber('3');
+    service.constructNumber('=');
+
+    expect(service.resultText()).toBe('6');
   });
 
   it('should calculate result correctly for division', () => {
-    // todo:
+    service.constructNumber('1');
+    service.constructNumber('0');
+    service.constructNumber('/');
+    service.constructNumber('2');
+    service.constructNumber('=');
+
+    expect(service.resultText()).toBe('5');
   });
 
   it('should handle decimal point correctly', () => {
-    // todo:
+    service.constructNumber('1');
+    service.constructNumber('.');
+    service.constructNumber('.');
+
+    expect(service.resultText()).toBe('1.');
   });
 
   it('should handle decimal point starting with 0', () => {
-    // todo:
+    service.constructNumber('.');
+    service.constructNumber('.');
+
+    expect(service.resultText()).toBe('0.');
   });
 
   it('should handle sign change +/-', () => {
-    // todo:
+    service.constructNumber('1');
+    service.constructNumber('+/-');
+
+    expect(service.resultText()).toBe('-1');
+    service.constructNumber('+/-');
+
+    expect(service.resultText()).toBe('1');
   });
 
   it('should handle backspace', () => {
-    // todo:
+    service.constructNumber('1');
+    service.constructNumber('0');
+    service.constructNumber('Backspace');
+
+    expect(service.resultText()).toBe('1');
   });
 
   it('should handle backspace with negative numbers', () => {
-    // todo:
+    service.constructNumber('1');
+    service.constructNumber('0');
+    service.constructNumber('+/-');
+    service.constructNumber('Backspace');
+
+    expect(service.resultText()).toBe('-1');
   });
 
   it('should handle max length', () => {
-    // todo:
+    const consoleSpy = vi.spyOn(console, 'log');
+
+    consoleSpy.mockImplementation(() => {});
+
+    for (let i = 0; i < 12; i++) {
+      service.constructNumber('1');
+    }
+
+    expect(service.resultText().length).toBe(10);
+    expect(service.resultText()).toBe('1111111111');
+    expect(consoleSpy).toHaveBeenCalled();
+    expect(consoleSpy).toHaveBeenCalledTimes(2);
+    expect(consoleSpy).toHaveBeenCalledWith('Max length reached');
   });
 
   it('should handle invalid input', () => {
-    // todo:
+    const consoleSpy = vi.spyOn(console, 'log');
+
+    consoleSpy.mockImplementation(() => {});
+
+    service.constructNumber('a');
+    service.constructNumber('a');
+
+    expect(service.resultText()).toBe('0');
+    expect(consoleSpy).toHaveBeenCalled();
+    expect(consoleSpy).toHaveBeenCalledTimes(2);
+    expect(consoleSpy).toHaveBeenCalledWith('invalid input', 'a');
   });
 
   it('should handle negative zero input correctly', () => {
-    // todo:
+    service.constructNumber('+/-');
+    service.constructNumber('1');
+
+    expect(service.resultText()).toBe('-1');
   });
 });
